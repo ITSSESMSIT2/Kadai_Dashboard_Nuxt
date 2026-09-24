@@ -12,11 +12,14 @@ export default defineNuxtConfig({
 
   modules: ['@pinia/nuxt'],
 
+  css: ['~/assets/styles/tokens.css'],
+
   app: {
     // GitHub Pages はサブパス配信。Actions 上では GITHUB_REPOSITORY からリポジトリ名を取るので、
     // リポジトリ名が変わっても書き換え不要。ローカルは '/' のまま
     baseURL: process.env.GITHUB_REPOSITORY
       ? `/${process.env.GITHUB_REPOSITORY.split('/')[1]}/`
       : '/',
+    head: { title: '進捗管理ボード' },
   },
 })

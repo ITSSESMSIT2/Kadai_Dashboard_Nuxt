@@ -1,75 +1,67 @@
-# Nuxt Minimal Starter
+# Kadai_Dashboard_Nuxt（提出課題④ 進捗管理ボード / Nuxt版）
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+タスクを登録して、期限とステータスで進捗を管理するアプリ。
+提出課題①（素のJavaScript）と同じ題材を、Nuxtで作り直す。
 
-## Setup
+## 技術スタック
 
-Make sure to install dependencies:
+| 種別 | 使用技術 |
+| --- | --- |
+| フレームワーク | Nuxt 4（`ssr: false` / 実PJT準拠） |
+| UI | Vue 3（Composition API / `<script setup>`） |
+| 言語 | TypeScript |
+| 状態管理 | Pinia（`@pinia/nuxt`） |
+| Node | 24.20.0（`.node-version` / `.nvmrc` で固定） |
+| 公開 | GitHub Pages（main へのマージで GitHub Actions が自動デプロイ） |
+
+## セットアップ
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
+nvm use        # .nvmrc の 24.20.0 に切り替える
 yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## 開発コマンド
 
-Start the development server on `http://localhost:3000`:
+| コマンド | 内容 |
+| --- | --- |
+| `yarn dev` | 開発サーバーを起動する |
+| `yarn generate` | 静的ビルド（GitHub Pages に公開されるものと同じ） |
+| `yarn preview` | ビルド結果をローカルで確認する |
 
-```bash
-# npm
-npm run dev
+## リポジトリ構成
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+```
+.github/workflows/deploy.yml  main へのpushでビルドしGitHub Pagesへ公開
+app/
+  assets/styles/tokens.css    デザイントークン（色・余白・角丸・影）
+  pages/                      ページ。ファイル名がそのままURLになる
+nuxt.config.ts                ssr:false / Pinia / baseURL などの設定
+public/                       静的ファイル（ビルドされずそのまま配信される）
 ```
 
-## Production
+## スタイルの決まり
 
-Build the application for production:
+- 色・余白・角丸・影は `app/assets/styles/tokens.css` のCSS変数を `var(--…)` で参照する。値を直書きしない
+- コンポーネントのスタイルは `<style scoped>` に閉じる
 
-```bash
-# npm
-npm run build
+## 公開フロー
 
-# pnpm
-pnpm build
+main にマージされると `.github/workflows/deploy.yml` が動き、`yarn generate` の出力（`.output/public`）が GitHub Pages に公開される。
+サブパス配信のため `nuxt.config.ts` の `app.baseURL` をリポジトリ名から自動で決めている。
 
-# yarn
-yarn build
+## 機能概要
 
-# bun
-bun run build
-```
+<!-- TODO: 何ができるアプリか、画面と操作を書く -->
 
-Locally preview production build:
+## 課題①との差分表
 
-```bash
-# npm
-npm run preview
+<!-- TODO: 素のJSでは自分で書いていたのに、Nuxtでは書かなくてよくなった処理を書く -->
 
-# pnpm
-pnpm preview
+## 工夫した点
 
-# yarn
-yarn preview
+<!-- TODO: 設計上の判断や、なぜその書き方にしたかを書く -->
 
-# bun
-bun run preview
-```
+## 詰まった点・調べたこと
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+<!-- TODO: つまずいた箇所と、どう調べて解決したかを書く -->
