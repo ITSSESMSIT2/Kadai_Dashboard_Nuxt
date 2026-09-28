@@ -2,6 +2,7 @@
 import type { Task } from '~/types/task'
 
 defineProps<{ tasks: Task[] }>()
+const emit = defineEmits<{ delete: [task: Task] }>()
 </script>
 
 <template>
@@ -17,7 +18,12 @@ defineProps<{ tasks: Task[] }>()
         </tr>
       </thead>
       <tbody>
-        <TaskItem v-for="task in tasks" :key="task.id" :task="task" />
+        <TaskItem
+          v-for="task in tasks"
+          :key="task.id"
+          :task="task"
+          @delete="emit('delete', $event)"
+        />
       </tbody>
     </table>
   </div>

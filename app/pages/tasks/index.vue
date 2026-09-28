@@ -1,7 +1,21 @@
 <script setup lang="ts">
+import type { Task } from '~/types/task'
+
 const taskStore = useTaskStore()
 // 分割代入するとリアクティビティが切れるため storeToRefs を使う
 const { tasks } = storeToRefs(taskStore)
+
+/** 削除の確認中のタスク。null なら確認ダイアログを閉じている */
+const taskToDelete = ref<Task | null>(null)
+
+const confirmMessage = computed(() =>
+  taskToDelete.value ? `「${taskToDelete.value.title}」を削除します。よろしいですか？` : '',
+)
+
+const deleteTask = () => {
+  if (taskToDelete.value) taskStore.removeTask(taskToDelete.value.id)
+  taskToDelete.value = null
+}
 </script>
 
 <template>
@@ -14,8 +28,15 @@ const { tasks } = storeToRefs(taskStore)
     <h2 class="card-title">タスク一覧</h2>
 
     <p v-if="tasks.length === 0" class="state">タスクがありません。</p>
-    <TaskList v-else :tasks="tasks" />
+    <TaskList v-else :tasks="tasks" @delete="taskToDelete = $event" />
   </section>
+
+  <ConfirmDialog
+    :open="taskToDelete !== null"
+    :message="confirmMessage"
+    @confirm="deleteTask"
+    @cancel="taskToDelete = null"
+  />
 </template>
 
 <style scoped>

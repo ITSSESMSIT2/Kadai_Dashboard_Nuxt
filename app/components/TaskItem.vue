@@ -3,6 +3,9 @@ import type { Status, Task } from '~/types/task'
 import { STATUSES } from '~/constants/status'
 
 const props = defineProps<{ task: Task }>()
+const emit = defineEmits<{ delete: [task: Task] }>()
+
+const taskStore = useTaskStore()
 
 /** ステータスごとに選択欄の文字色・枠線・背景を変える */
 const STATUS_CLASS: Record<Status, string> = {
@@ -15,6 +18,11 @@ const statusClass = computed(() => STATUS_CLASS[props.task.status])
 
 /** 期限が今日より前なら期限切れ（課題①と同じ判定） */
 const isOverdue = computed(() => Boolean(props.task.dueDate) && props.task.dueDate < today())
+
+const changeStatus = (event: Event) => {
+  const status = (event.target as HTMLSelectElement).value as Status
+  taskStore.updateStatus(props.task.id, status)
+}
 </script>
 
 <template>
@@ -22,14 +30,18 @@ const isOverdue = computed(() => Boolean(props.task.dueDate) && props.task.dueDa
     <td class="cell cell-name">{{ task.title }}</td>
     <td class="cell" :class="{ 'is-overdue': isOverdue }">{{ formatDate(task.dueDate) }}</td>
     <td class="cell">
-      <!-- PR3: @change でストアの action を呼び、ステータスを更新する -->
-      <select class="status" :class="statusClass" :value="task.status">
+      <select class="status" :class="statusClass" :value="task.status" @change="changeStatus">
         <option v-for="status in STATUSES" :key="status" :value="status">{{ status }}</option>
       </select>
     </td>
     <td class="cell cell-action">
-      <!-- PR3: @click でストアの action を呼び、この行を削除する -->
-      <button class="delete" type="button" :aria-label="`${task.title} を削除`">
+      <!-- 削除の確認はページ側でまとめて出すため、ここでは親に知らせるだけにする -->
+      <button
+        class="delete"
+        type="button"
+        :aria-label="`${task.title} を削除`"
+        @click="emit('delete', task)"
+      >
         <img src="~/assets/images/trash.svg" alt="" />
       </button>
     </td>
