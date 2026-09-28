@@ -1,6 +1,8 @@
 <template>
   <header class="app-bar">
-    <h1 class="app-title">進捗管理ボード</h1>
+    <h1 class="app-title">
+      <NuxtLink class="app-title-link" to="/">進捗管理ボード</NuxtLink>
+    </h1>
   </header>
 
   <main class="container">
@@ -24,6 +26,21 @@
   margin: 0;
   font-size: var(--font-title);
   font-weight: 600;
+}
+
+/* リンクの既定の見た目（青字・下線）を打ち消して、文字はヘッダーのまま押せるようにする */
+.app-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-title-link:hover {
+  opacity: 0.85;
+}
+
+.app-title-link:focus-visible {
+  outline: 2px solid var(--surface);
+  outline-offset: 4px;
 }
 
 .container {
