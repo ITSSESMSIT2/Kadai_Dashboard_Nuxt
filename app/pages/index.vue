@@ -12,7 +12,7 @@
       <button class="hero-button" type="button" disabled>タスク一覧へ（PR1で有効化）</button>
     </section>
 
-    <!-- PR5: ステータス別の件数サマリ（未対応 / 処理中 / 完了）をここに追加する -->
+    <!-- PR4: ステータス別の件数サマリ（未対応 / 処理中 / 完了）をここに追加する -->
   </main>
 </template>
 
