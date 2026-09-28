@@ -32,4 +32,22 @@ export const useTaskStore = defineStore('task', {
       this.tasks = this.tasks.filter((task) => task.id !== id)
     },
   },
+
+  // リロードしても残るよう localStorage に保存する（加点要件）
+  persist: {
+    // キーは明示する。GitHub Pages は itssesmsit2.github.io の1オリジンに全リポジトリが
+    // 載るため、既定値のストアID 'task' のままだと他の課題と衝突しうる
+    key: 'kadai-dashboard-nuxt.task',
+
+    // 保存先も明示する。Nuxt版の既定は Cookie（useCookie）で、4KB制限があるうえ
+    // 同一オリジンの全リクエストに載る。タスク本体の保存先には向かない
+    storage: piniaPluginPersistedstate.localStorage(),
+
+    afterHydrate(context) {
+      // localStorage の中身は手で書き換えられるし、型を変えれば古い形のデータも残る。
+      // プラグインは中身を検証しないので、復元した値は信用せず型に合うものだけ残す
+      const state = context.store.$state as { tasks: Task[] }
+      state.tasks = state.tasks.filter((task) => STATUSES.includes(task.status))
+    },
+  },
 })

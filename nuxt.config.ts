@@ -10,7 +10,8 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
-  modules: ['@pinia/nuxt'],
+  // persistedstate は @pinia/nuxt より後ろに置く（Piniaが用意されたあとにプラグインを挿すため）
+  modules: ['@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt'],
 
   css: ['~/assets/styles/tokens.css'],
 
