@@ -12,12 +12,15 @@ const STATUS_CLASS: Record<Status, string> = {
 }
 
 const statusClass = computed(() => STATUS_CLASS[props.task.status])
+
+/** 期限が今日より前なら期限切れ（課題①と同じ判定） */
+const isOverdue = computed(() => Boolean(props.task.dueDate) && props.task.dueDate < today())
 </script>
 
 <template>
   <tr>
     <td class="cell cell-name">{{ task.title }}</td>
-    <td class="cell">{{ formatDate(task.dueDate) }}</td>
+    <td class="cell" :class="{ 'is-overdue': isOverdue }">{{ formatDate(task.dueDate) }}</td>
     <td class="cell">
       <!-- PR3: @change でストアの action を呼び、ステータスを更新する -->
       <select class="status" :class="statusClass" :value="task.status">
@@ -38,6 +41,11 @@ const statusClass = computed(() => STATUS_CLASS[props.task.status])
   padding: var(--space-md) var(--space-sm);
   border-bottom: 1px solid var(--border);
   font-size: var(--font-body);
+}
+
+.cell.is-overdue {
+  color: var(--danger);
+  font-weight: 600;
 }
 
 .cell-name {

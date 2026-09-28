@@ -6,6 +6,11 @@ const { tasks } = storeToRefs(taskStore)
 
 <template>
   <section class="card">
+    <h2 class="card-title">新規タスクを追加</h2>
+    <TaskForm />
+  </section>
+
+  <section class="card">
     <h2 class="card-title">タスク一覧</h2>
 
     <p v-if="tasks.length === 0" class="state">タスクがありません。</p>
