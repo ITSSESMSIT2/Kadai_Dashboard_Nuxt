@@ -1,6 +1,9 @@
 import type { Task } from '~/types/task'
 import type { SortOrder, StatusFilter } from '~/types/filter'
 
+/** 1ページに表示する件数 */
+const PAGE_SIZE = 10
+
 /** 期限が未入力のタスクは、昇順・降順のどちらでも末尾に置く */
 const compareMissingDueDate = (a: Task, b: Task): number => {
   if (Boolean(a.dueDate) === Boolean(b.dueDate)) return 0
@@ -44,5 +47,28 @@ export const useTaskSearch = () => {
     )
   })
 
-  return { tasks, status, sortOrder, sortedTasks }
+  const currentPage = ref(1)
+
+  /** 総ページ数。0件のときは1ページ扱いにして、ページ番号が0にならないようにする */
+  const totalPages = computed(() => Math.max(Math.ceil(sortedTasks.value.length / PAGE_SIZE), 1))
+
+  /** 表示中のページ分だけ切り出した一覧。画面はこれを描画する */
+  const pagedTasks = computed(() => {
+    const start = (currentPage.value - 1) * PAGE_SIZE
+    return sortedTasks.value.slice(start, start + PAGE_SIZE)
+  })
+
+  // 絞り込みや並び順を変えたら1ページ目に戻す。
+  // 3ページ目を見たまま条件を変えると、該当は少ないのに空のページが出てしまうため。
+  watch([status, sortOrder], () => {
+    currentPage.value = 1
+  })
+
+  // 削除で総ページ数が減ったとき、表示中のページが範囲外に取り残されないよう最終ページへ寄せる。
+  // 値を導き直すのではなく状態を書き換える副作用なので、computed ではなく watch で書く。
+  watch(totalPages, (total) => {
+    if (currentPage.value > total) currentPage.value = total
+  })
+
+  return { tasks, status, sortOrder, sortedTasks, currentPage, totalPages, pagedTasks }
 }

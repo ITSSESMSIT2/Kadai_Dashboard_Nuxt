@@ -3,7 +3,7 @@ import type { Task } from '~/types/task'
 
 const taskStore = useTaskStore()
 // 絞り込み・並び替えのロジックは composable にまとめている
-const { tasks, status, sortOrder, sortedTasks } = useTaskSearch()
+const { tasks, status, sortOrder, sortedTasks, currentPage, totalPages, pagedTasks } = useTaskSearch()
 
 /** 削除の確認中のタスク。null なら確認ダイアログを閉じている */
 const taskToDelete = ref<Task | null>(null)
@@ -37,7 +37,11 @@ const deleteTask = () => {
     <p v-else-if="sortedTasks.length === 0" class="state">
       該当するタスクがありません。条件を変更してください。
     </p>
-    <TaskList v-else v-model:sort-order="sortOrder" :tasks="sortedTasks" @delete="taskToDelete = $event" />
+    <template v-else>
+      <TaskList v-model:sort-order="sortOrder" :tasks="pagedTasks" @delete="taskToDelete = $event" />
+      <!-- 1ページに収まるときはページ送りを出さない -->
+      <TaskPager v-if="totalPages > 1" v-model:page="currentPage" :total-pages="totalPages" />
+    </template>
   </section>
 
   <ConfirmDialog
