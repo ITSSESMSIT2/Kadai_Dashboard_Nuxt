@@ -46,8 +46,17 @@ export const useTaskStore = defineStore('task', {
     afterHydrate(context) {
       // localStorage の中身は手で書き換えられるし、型を変えれば古い形のデータも残る。
       // プラグインは中身を検証しないので、復元した値は信用せず型に合うものだけ残す
-      const state = context.store.$state as { tasks: Task[] }
-      state.tasks = state.tasks.filter((task) => STATUSES.includes(task.status))
+      const state = context.store.$state as { tasks: unknown }
+      state.tasks = Array.isArray(state.tasks)
+        ? state.tasks.filter(
+            (task) =>
+              task &&
+              Number.isSafeInteger(task.id) &&
+              typeof task.title === 'string' &&
+              typeof task.dueDate === 'string' &&
+              STATUSES.includes(task.status),
+          )
+        : []
     },
   },
 })

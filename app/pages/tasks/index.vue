@@ -2,8 +2,8 @@
 import type { Task } from '~/types/task'
 
 const taskStore = useTaskStore()
-// 分割代入するとリアクティビティが切れるため storeToRefs を使う
-const { tasks } = storeToRefs(taskStore)
+// 絞り込み・並び替えのロジックは composable にまとめている
+const { tasks, status, sortOrder, sortedTasks } = useTaskSearch()
 
 /** 削除の確認中のタスク。null なら確認ダイアログを閉じている */
 const taskToDelete = ref<Task | null>(null)
@@ -25,10 +25,19 @@ const deleteTask = () => {
   </section>
 
   <section class="card">
-    <h2 class="card-title">タスク一覧</h2>
+    <div class="card-header">
+      <h2 class="card-title">タスク一覧</h2>
+      <p class="count">該当 {{ sortedTasks.length }} 件 ・ 全 {{ tasks.length }} 件</p>
+    </div>
 
+    <TaskFilter v-model:status="status" />
+
+    <!-- 1件も無いときと、絞り込んだ結果が0件のときでは案内を変える -->
     <p v-if="tasks.length === 0" class="state">タスクがありません。</p>
-    <TaskList v-else :tasks="tasks" @delete="taskToDelete = $event" />
+    <p v-else-if="sortedTasks.length === 0" class="state">
+      該当するタスクがありません。条件を変更してください。
+    </p>
+    <TaskList v-else v-model:sort-order="sortOrder" :tasks="sortedTasks" @delete="taskToDelete = $event" />
   </section>
 
   <ConfirmDialog
@@ -49,9 +58,29 @@ const deleteTask = () => {
   box-shadow: var(--elevation-1);
 }
 
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
 .card-title {
   margin: 0 0 var(--space-md);
   font-size: var(--font-subtitle);
+}
+
+/* ヘッダー行の中では下余白を持たせない（行の高さで揃える） */
+.card-header .card-title {
+  margin-bottom: 0;
+}
+
+.count {
+  margin: 0;
+  color: var(--text-sub);
+  font-size: var(--font-caption);
 }
 
 .state {

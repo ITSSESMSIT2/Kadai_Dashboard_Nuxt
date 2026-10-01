@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import type { Status, Task } from '~/types/task'
-import { STATUSES } from '~/constants/status'
+import { STATUS_CLASS, STATUSES } from '~/constants/status'
 
 const props = defineProps<{ task: Task }>()
 const emit = defineEmits<{ delete: [task: Task] }>()
 
 const taskStore = useTaskStore()
-
-/** ステータスごとに選択欄の文字色・枠線・背景を変える */
-const STATUS_CLASS: Record<Status, string> = {
-  未対応: 'is-todo',
-  処理中: 'is-doing',
-  完了: 'is-done',
-}
 
 const statusClass = computed(() => STATUS_CLASS[props.task.status])
 

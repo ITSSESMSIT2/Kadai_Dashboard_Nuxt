@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import type { Status } from '~/types/task'
-import { STATUSES } from '~/constants/status'
+import { STATUS_CLASS, STATUSES } from '~/constants/status'
 
 const taskStore = useTaskStore()
 // 集計は getters が持つ。画面側では数え直さない
 const { countByStatus } = storeToRefs(taskStore)
-
-/** ステータスごとに件数の色を変える（一覧の配色と揃える） */
-const STATUS_CLASS: Record<Status, string> = {
-  未対応: 'is-todo',
-  処理中: 'is-doing',
-  完了: 'is-done',
-}
 </script>
 
 <template>
